@@ -1,0 +1,18 @@
+# Plik środowiskowy
+.env
+
+# Folder z migracjami Alembic
+alembic/versions/
+
+# Środowisko wirtualne
+venv/
+
+# Pliki tymczasowe Pythona
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Pliki konfiguracyjne IDE
+.vscode/
+.idea/

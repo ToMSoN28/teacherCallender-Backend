@@ -1,0 +1,8 @@
+[project]
+name = "TeacherCallender"
+version = "0.1.0"
+description = "Beckend for TeacherCallender application"
+authors = [
+    { name="Tomasz Kowalski", email="t.kowalski999@gmail.com" }
+]
+dependencies = []
