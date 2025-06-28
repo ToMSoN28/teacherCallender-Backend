@@ -12,3 +12,4 @@ class Student(Base):
     email = Column(String, unique=True, index=True, nullable=True)
     teacher_id = Column(Integer, ForeignKey("teachers.id"))
     teacher = relationship("Teacher", back_populates="students")
+    lessons = relationship("Lesson", back_populates="student", cascade="all, delete-orphan")

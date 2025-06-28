@@ -9,3 +9,4 @@ class Teacher(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     students = relationship("Student", back_populates="teacher")
+    lessons = relationship("Lesson", back_populates="teacher", cascade="all, delete-orphan")

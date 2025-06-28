@@ -31,6 +31,7 @@ if config.config_file_name is not None:
 from app.db.base import Base
 from app.models import student
 from app.models import teacher
+from app.models import lesson
 target_metadata = Base.metadata
 
 

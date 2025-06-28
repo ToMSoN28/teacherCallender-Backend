@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
+from datetime import date, datetime
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.schemas.teacher import Teacher, TeacherCreate
-from app.crud import crud_teacher
+from app.schemas.lesson import LessonForTeacherCallender, Lesson
+from app.crud import crud_teacher, crud_lesson
 from app.api import deps
 from app.core.security import create_access_token
 
@@ -31,3 +33,33 @@ def login_teacher(
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     access_token = create_access_token(data={"sub": str(teacher.id)})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.get("/lessons", response_model=list[LessonForTeacherCallender])
+def get_lessons_for_teacher(
+    db: Session = Depends(deps.get_db),
+    current_teacher=Depends(deps.get_current_teacher),
+    start_date: date = Query(None),
+    end_date: date = Query(None)
+):
+    lessons = crud_lesson.get_lessons_for_teacher(db, teacher_id=current_teacher.id, start_date=start_date, end_date=end_date)
+    return [
+        LessonForTeacherCallender(
+            id=lesson.id,
+            date=lesson.date,
+            start_time=lesson.start_time,
+            end_time=lesson.end_time,
+            student_id=lesson.student_id,
+            student_first_name=lesson.student.first_name,
+            student_last_name=lesson.student.last_name,
+        )
+        for lesson in lessons
+    ]
+    
+@router.get("/lessons/unpaid", response_model=list[Lesson])
+def get_unpaid_lessons(
+    db: Session = Depends(deps.get_db),
+    current_teacher=Depends(deps.get_current_teacher),
+    student_id: int = Query(None)
+):
+    lessons = crud_lesson.get_unpaid_lessons(db, teacher_id=current_teacher.id, student_id=student_id)
+    return lessons
