@@ -1,15 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
-from datetime import date, datetime
+from fastapi import APIRouter, Depends, HTTPException, Query, Body
+from datetime import date, datetime,timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.schemas.teacher import Teacher, TeacherCreate
 from app.schemas.lesson import LessonForTeacherCallender, Lesson
 from app.crud import crud_teacher, crud_lesson
 from app.api import deps
-from app.core.security import create_access_token
+from app.core import security
 
 router = APIRouter()
-
+# --- Auth section ---
 @router.post("/register", response_model=Teacher)
 def register_teacher(
     teacher_in: TeacherCreate,
@@ -31,9 +31,28 @@ def login_teacher(
     )
     if not teacher:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
-    access_token = create_access_token(data={"sub": str(teacher.id)})
-    return {"access_token": access_token, "token_type": "bearer"}
+    access_token = security.create_access_token(data={"sub": str(teacher.id)}, expires_delta=timedelta(minutes=60))
+    refrash_token = security.create_access_token(data={"sub": str(teacher.id)}, expires_delta=timedelta(days=14))
+    return {"access_token": access_token, "token_type": "bearer", "token_expires_in": 3600, "refresh_token": refrash_token}
 
+@router.post("/refresh")
+def refresh_access_token(
+    refresh_token: str = Body(...),
+    db: Session = Depends(deps.get_db)
+):
+    payload = security.verify_token(refresh_token)
+    teacher_id = payload.get("sub")
+    if not teacher_id:
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+    teacher = crud_teacher.get_teacher_by_id(db, teacher_id=int(teacher_id))
+    if not teacher:
+        raise HTTPException(status_code=401, detail="User not found")
+    access_token = security.create_access_token(data={"sub": str(teacher.id)}, expires_delta=timedelta(minutes=60))
+    # refrash_token = create_access_token(data={"sub": str(teacher.id)}, expires_delta=timedelta(days=7))
+    return {"access_token": access_token, "token_type": "bearer", "token_expires_in": 3600}
+
+
+# --- Teacher section ---
 @router.get("/lessons", response_model=list[LessonForTeacherCallender])
 def get_lessons_for_teacher(
     db: Session = Depends(deps.get_db),

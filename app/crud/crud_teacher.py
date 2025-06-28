@@ -11,6 +11,9 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_teacher_by_email(db: Session, email: str):
     return db.query(Teacher).filter(Teacher.email == email).first()
 
+def get_teacher_by_id(db: Session, teacher_id: int):
+    return db.query(Teacher).filter(Teacher.id == teacher_id).first()
+
 def create_teacher(db: Session, teacher: TeacherCreate):
     hashed_password = pwd_context.hash(teacher.password)
     db_teacher = Teacher(email=teacher.email, hashed_password=hashed_password)
