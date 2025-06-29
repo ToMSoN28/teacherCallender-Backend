@@ -53,32 +53,32 @@ def refresh_access_token(
 
 
 # --- Teacher section ---
-@router.get("/lessons", response_model=list[LessonForTeacherCallender])
-def get_lessons_for_teacher(
-    db: Session = Depends(deps.get_db),
-    current_teacher=Depends(deps.get_current_teacher),
-    start_date: date = Query(None),
-    end_date: date = Query(None)
-):
-    lessons = crud_lesson.get_lessons_for_teacher(db, teacher_id=current_teacher.id, start_date=start_date, end_date=end_date)
-    return [
-        LessonForTeacherCallender(
-            id=lesson.id,
-            date=lesson.date,
-            start_time=lesson.start_time,
-            end_time=lesson.end_time,
-            student_id=lesson.student_id,
-            student_first_name=lesson.student.first_name,
-            student_last_name=lesson.student.last_name,
-        )
-        for lesson in lessons
-    ]
+# @router.get("/lessons", response_model=list[LessonForTeacherCallender])
+# def get_lessons_for_teacher(
+#     db: Session = Depends(deps.get_db),
+#     current_teacher=Depends(deps.get_current_teacher),
+#     start_date: date = Query(None),
+#     end_date: date = Query(None)
+# ):
+#     lessons = crud_lesson.get_lessons_for_teacher(db, teacher_id=current_teacher.id, start_date=start_date, end_date=end_date)
+#     return [
+#         LessonForTeacherCallender(
+#             id=lesson.id,
+#             date=lesson.date,
+#             start_time=lesson.start_time,
+#             end_time=lesson.end_time,
+#             student_id=lesson.student_id,
+#             student_first_name=lesson.student.first_name,
+#             student_last_name=lesson.student.last_name,
+#         )
+#         for lesson in lessons
+#     ]
     
-@router.get("/lessons/unpaid", response_model=list[Lesson])
-def get_unpaid_lessons(
-    db: Session = Depends(deps.get_db),
-    current_teacher=Depends(deps.get_current_teacher),
-    student_id: int = Query(None)
-):
-    lessons = crud_lesson.get_unpaid_lessons(db, teacher_id=current_teacher.id, student_id=student_id)
-    return lessons
+# @router.get("/lessons/unpaid", response_model=list[Lesson])
+# def get_unpaid_lessons(
+#     db: Session = Depends(deps.get_db),
+#     current_teacher=Depends(deps.get_current_teacher),
+#     student_id: int = Query(None)
+# ):
+#     lessons = crud_lesson.get_unpaid_lessons(db, teacher_id=current_teacher.id, student_id=student_id)
+#     return lessons

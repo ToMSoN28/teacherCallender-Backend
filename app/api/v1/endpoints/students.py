@@ -5,6 +5,8 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from app.schemas.student import Student, StudentCreate
+from app.schemas.lesson import Lesson, LessonCreate
+from app.crud import crud_lesson
 from app.crud import crud_student
 from app import crud, models
 from app.api import deps
@@ -51,3 +53,27 @@ def read_student(
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
     return student
+
+@router.get("/{student_id}/lessons", response_model=List[Lesson])
+def read_lessons(
+    student_id: int,
+    db: Session = Depends(deps.get_db),
+    current_teacher = Depends(deps.get_current_teacher),
+):
+    lessons = crud_lesson.get_lessons_by_student(db, student_id=student_id, teacher_id=current_teacher.id)
+    return lessons
+
+@router.post("/{student_id}/lessons", response_model=Lesson)
+def create_lesson(
+    student_id: int,
+    lesson_in: LessonCreate,
+    db: Session = Depends(deps.get_db),
+    current_teacher = Depends(deps.get_current_teacher),
+):
+    try:
+        lesson = crud_lesson.create_lesson_for_student(
+            db, student_id=student_id, teacher_id=current_teacher.id, lesson_in=lesson_in
+        )
+        return lesson
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

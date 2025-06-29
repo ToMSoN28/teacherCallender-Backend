@@ -16,7 +16,7 @@ ALGORITHM = os.getenv("JWT_ALGORITHM")
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/teachers/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login")
 
 def get_db():
     db = SessionLocal()
