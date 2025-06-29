@@ -2,6 +2,7 @@
 from pydantic import BaseModel, condecimal, EmailStr
 from datetime import date, datetime
 from typing import Optional
+import datetime as dt
 
 DecimalType = condecimal(max_digits=10, decimal_places=2)
 
@@ -37,7 +38,7 @@ class LessonForTeacherCallender(BaseModel):
 
 class LessonUpdate(BaseModel):
     topic: Optional[str] = None
-    date: Optional[date] = None
+    date: Optional[dt.date] = None
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None
     notes: Optional[str] = None

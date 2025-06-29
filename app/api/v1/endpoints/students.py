@@ -1,8 +1,9 @@
 # app/api/v1/endpoints/students.py
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from datetime import date
 
 from app.schemas.student import Student, StudentCreate
 from app.schemas.lesson import Lesson, LessonCreate
@@ -59,8 +60,10 @@ def read_lessons(
     student_id: int,
     db: Session = Depends(deps.get_db),
     current_teacher = Depends(deps.get_current_teacher),
+    start_date: date = Query(None),
+    end_date: date = Query(None),
 ):
-    lessons = crud_lesson.get_lessons_by_student(db, student_id=student_id, teacher_id=current_teacher.id)
+    lessons = crud_lesson.get_lessons_by_student(db, student_id=student_id, teacher_id=current_teacher.id, start_date=start_date, end_date=end_date)
     return lessons
 
 @router.post("/{student_id}/lessons", response_model=Lesson)

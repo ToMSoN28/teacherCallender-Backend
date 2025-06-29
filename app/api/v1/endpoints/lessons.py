@@ -48,11 +48,14 @@ def update_lesson(
     db: Session = Depends(deps.get_db),
     current_teacher = Depends(deps.get_current_teacher),
 ):
-    lesson = crud_lesson.get_lesson_by_id(db, lesson_id)
-    if not lesson or lesson.teacher_id != current_teacher.id:
-        raise HTTPException(status_code=404, detail="Lesson not found")
-    updated = crud_lesson.update_lesson(db, lesson, lesson_in)
-    return updated
+    try:
+        lesson = crud_lesson.get_lesson_by_id(db, lesson_id)
+        if not lesson or lesson.teacher_id != current_teacher.id:
+            raise HTTPException(status_code=404, detail="Lesson not found")
+        updated = crud_lesson.update_lesson(db, lesson, lesson_in)
+        return updated
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/{lesson_id}", response_model=LessonExtended)
 def get_lesson_by_id(
@@ -61,7 +64,7 @@ def get_lesson_by_id(
     current_teacher = Depends(deps.get_current_teacher),
     lesson_id: int
 ):
-    lesson = crud_lesson.get_lesson_by_id(db, int(lesson_id), teacher_id=current_teacher.id, extiended=True)
+    lesson = crud_lesson.get_lesson_by_id(db, int(lesson_id), teacher_id=current_teacher.id, extended=True)
     if not lesson or lesson.teacher_id != current_teacher.id:
         raise HTTPException(status_code=404, detail="Lesson not found")
     print(lesson)
