@@ -16,6 +16,9 @@ class Lesson(Base):
     paid_amount = Column(Numeric(10, 2), nullable=False)  # Ile wpłacono
     student_id = Column(Integer, ForeignKey("students.id"), nullable=False)
     teacher_id = Column(Integer, ForeignKey("teachers.id"), nullable=False)
+    lesson_serie_id = Column(Integer, ForeignKey("lesson_series.id"), nullable=True)
+    
 
     student = relationship("Student", back_populates="lessons")
     teacher = relationship("Teacher", back_populates="lessons")
+    lesson_serie = relationship("LessonSerie", back_populates="lessons")

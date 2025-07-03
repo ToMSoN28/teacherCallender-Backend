@@ -12,8 +12,8 @@ class LessonBase(BaseModel):
     start_time: datetime
     end_time: datetime
     notes: Optional[str] = None
-    price: DecimalType
-    paid_amount: DecimalType
+    price: Optional[DecimalType] = 0.00
+    paid_amount: Optional[DecimalType] = 0.00
 
 
 class LessonCreate(LessonBase):

@@ -32,6 +32,7 @@ from app.db.base import Base
 from app.models import student
 from app.models import teacher
 from app.models import lesson
+from app.models import lesson_serie
 target_metadata = Base.metadata
 
 

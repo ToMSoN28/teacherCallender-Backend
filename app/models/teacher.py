@@ -10,3 +10,4 @@ class Teacher(Base):
     hashed_password = Column(String, nullable=False)
     students = relationship("Student", back_populates="teacher")
     lessons = relationship("Lesson", back_populates="teacher", cascade="all, delete-orphan")
+    lesson_series = relationship("LessonSerie", back_populates="teacher", cascade="all, delete-orphan")

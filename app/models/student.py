@@ -13,3 +13,4 @@ class Student(Base):
     teacher_id = Column(Integer, ForeignKey("teachers.id"))
     teacher = relationship("Teacher", back_populates="students")
     lessons = relationship("Lesson", back_populates="student", cascade="all, delete-orphan")
+    lesson_series = relationship("LessonSerie", back_populates="student", cascade="all, delete-orphan")
